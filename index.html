@@ -11,9 +11,28 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script type="text/babel">
+        const { useState } = React
         function Lista() {
+            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+            const [randomAnimal, setRandomAnimal] = useState([])
+            function handleAnimali() {
+                let i = Math.floor(Math.random() * animalsChoices.length)
+                setRandomAnimal(prevAnimals => [...prevAnimals, animalsChoices[i]]);
+            }
             return (
-                <h1>ciao</h1>
+                <>
+                    <button onClick={handleAnimali}>Aggiungi Animale</button>
+                    <details>
+                        <summary>Animali</summary>
+                        <ul>
+                            {randomAnimal.map(animal => {
+                                return (
+                                    <li>{animal}</li>
+                                )
+                            })}
+                        </ul>
+                    </details>
+                </>
             )
         }
     </script>
