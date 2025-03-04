@@ -11,30 +11,75 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script type="text/babel">
-        const { useState } = React
+        const { useState } = React;
+
+        function Modal({ title, content, show = false, onClose = () => { }, onConfirm = () => { } }) {
+            return show && ReactDOM.createPortal(
+                <div className="modal-container">
+                    <div className="modal">
+                        <h2>{title}</h2>
+                        <div>{content}</div>
+                        <div className="modal-buttons">
+                            <button onClick={onClose}>Annulla</button>
+                            <button onClick={onConfirm}>Conferma</button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            );
+        }
+
         function Lista() {
-            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
-            const [randomAnimal, setRandomAnimal] = useState([])
-            function handleAnimali() {
-                let i = Math.floor(Math.random() * animalsChoices.length)
-                setRandomAnimal(prevAnimals => [...prevAnimals, animalsChoices[i]]);
+            const [animals, setAnimals] = useState([]);
+            const [showModal, setShowModal] = useState(false);
+            const [animalName, setAnimalName] = useState("");
+
+            function handleOpenModal() {
+                setShowModal(true);
             }
+
+            function handleCloseModal() {
+                setShowModal(false);
+                setAnimalName("");
+            }
+
+            function handleConfirm() {
+                if (animalName.trim()) {
+                    setAnimals(prevAnimals => [...prevAnimals, animalName]);
+                }
+                handleCloseModal();
+            }
+
             return (
                 <>
-                    <button onClick={handleAnimali}>Aggiungi Animale</button>
+                    <button onClick={handleOpenModal}>Aggiungi Animale</button>
                     <details>
                         <summary>Animali</summary>
                         <ul>
-                            {randomAnimal.map(animal => {
-                                return (
-                                    <li>{animal}</li>
-                                )
-                            })}
+                            {animals.map((animal, index) => (
+                                <li key={index}>{animal}</li>
+                            ))}
                         </ul>
                     </details>
+
+                    <Modal
+                        title="Aggiungi un nuovo animale"
+                        show={showModal}
+                        onClose={handleCloseModal}
+                        onConfirm={handleConfirm}
+                        content={
+                            <input
+                                type="text"
+                                value={animalName}
+                                onChange={(e) => setAnimalName(e.target.value)}
+                                placeholder="Inserisci il nome dell'animale"
+                            />
+                        }
+                    />
                 </>
-            )
+            );
         }
+
     </script>
     <script type="text/babel">
         const { createRoot } = ReactDOM
